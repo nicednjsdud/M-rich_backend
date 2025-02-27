@@ -1,5 +1,6 @@
-package com.maple
+package com.maple.config
 
+import com.maple.app.infrastructure.database.configureDatabases
 import io.ktor.server.application.*
 
 fun main(args: Array<String>) {

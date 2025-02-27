@@ -1,4 +1,4 @@
-package com.maple
+package com.maple.config
 
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*

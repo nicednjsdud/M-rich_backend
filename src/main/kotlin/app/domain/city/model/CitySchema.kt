@@ -1,4 +1,4 @@
-package com.maple
+package com.maple.app.domain.city.model
 
 import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable

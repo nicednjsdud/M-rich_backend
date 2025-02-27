@@ -1,5 +1,7 @@
-package com.maple
+package com.maple.app.infrastructure.database
 
+import com.maple.app.domain.city.model.City
+import com.maple.app.domain.city.model.CityService
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
