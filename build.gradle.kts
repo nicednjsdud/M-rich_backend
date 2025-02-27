@@ -1,4 +1,3 @@
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
@@ -30,6 +29,11 @@ dependencies {
     implementation(libs.ktor.server.netty)
     implementation(libs.logback.classic)
     implementation(libs.ktor.server.config.yaml)
+    implementation("org.postgresql:postgresql:42.6.0") // PostgreSQL 드라이버
+    implementation("org.jetbrains.exposed:exposed-core:0.41.1") // Exposed ORM
+    implementation("org.jetbrains.exposed:exposed-dao:0.41.1") // DAO 지원
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1") // JDBC 연동
+    implementation("com.zaxxer:HikariCP:4.0.3") // HikariCP
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
 }
