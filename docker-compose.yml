@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-ocr
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: mRich
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: >
+      bash -c "
+      echo '🚀 PostgreSQL 컨테이너 실행됨!';
+      echo '🔹 기본 DB: mRich';
+      echo '🔹 사용자: postgres';
+      echo '🔹 비밀번호: 1234';
+      echo '🛠️ 테이블 자동 생성 준비 완료!';
+      exec docker-entrypoint.sh postgres
+      "
+
+volumes:
+  postgres_data:
+    driver: local
