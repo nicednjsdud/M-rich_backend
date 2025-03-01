@@ -1,4 +1,3 @@
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
@@ -20,38 +19,49 @@ repositories {
 }
 
 dependencies {
+    // Ktor
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.server.content.negotiation)
-    implementation(libs.exposed.core)
-    implementation(libs.exposed.jdbc)
-    implementation(libs.h2)
     implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.netty)
-    implementation(libs.logback.classic)
     implementation(libs.ktor.server.config.yaml)
-    testImplementation(libs.ktor.server.test.host)
-    // postgres
-    implementation("org.postgresql:postgresql:42.5.4")
-    // hikari
+
+    // Logging
+    implementation(libs.logback.classic)
+
+    // Exposed ORM
+    implementation("org.jetbrains.exposed:exposed-core:0.43.0") // ✅ 추가
+    implementation("org.jetbrains.exposed:exposed-dao:0.43.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.43.0")
+
+    // Database
+    implementation("org.postgresql:postgresql:42.5.4") // ✅ PostgreSQL
+    implementation("com.h2database:h2:2.2.224") // ✅ H2 (테스트용)
+
+    // HikariCP (DB Connection Pool)
     implementation("com.zaxxer:HikariCP:5.0.1")
-    // BCrypt
+
+    // Security
     implementation("org.mindrot:jbcrypt:0.4")
-    // coroutine
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 
-    // JUnit 5 (최신 버전 사용)
+    // Coroutines 최신 버전 적용
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3") // ✅ 최신화
+
+    // 테스트 라이브러리
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
-
-    // Ktor 테스트 라이브러리
     testImplementation("io.ktor:ktor-server-tests-jvm:2.3.5")
     testImplementation("io.ktor:ktor-server-test-host:2.3.5")
 
-    // Exposed ORM 테스트 지원
+    // MockK
+    testImplementation("io.mockk:mockk:1.13.7")
+    testImplementation("io.mockk:mockk-agent-jvm:1.13.7")
+
+    // Exposed 테스트 지원
     testImplementation("org.jetbrains.exposed:exposed-dao:0.43.0")
     testImplementation("org.jetbrains.exposed:exposed-jdbc:0.43.0")
-    testImplementation("com.h2database:h2:2.2.224") // 테스트용 DB
+    testImplementation("com.h2database:h2:2.2.224")
 
     // Kotlin 테스트 지원
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -59,5 +69,5 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    systemProperty("config.file", "src/test/resources/application.yaml")
+    systemProperty("ktor.config", "src/test/resources/application.yaml") // ✅ 환경 설정 적용 방식 변경
 }
