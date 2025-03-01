@@ -36,6 +36,10 @@ dependencies {
     implementation("org.postgresql:postgresql:42.5.4")
     // hikari
     implementation("com.zaxxer:HikariCP:5.0.1")
+    // BCrypt
+    implementation("org.mindrot:jbcrypt:0.4")
+    // coroutine
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 
     // JUnit 5 (최신 버전 사용)
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
