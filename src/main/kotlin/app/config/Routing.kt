@@ -1,5 +1,9 @@
-package com.wyc.app.config
+package app.config
 
+import app.api.userRoutes
+import app.domain.user.repository.UserRepository
+import app.domain.user.service.UserService
+import app.infrastructure.database.DatabaseFactory
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -13,9 +17,17 @@ import org.jetbrains.exposed.sql.*
 import org.slf4j.event.*
 
 fun Application.configureRouting() {
+    val config = environment.config
+    val database = DatabaseFactory.init(config)
+
     routing {
-        get("/") {
-            call.respondText("Hello World!")
+        get("/"){
+            call.respondText("Hello, mRich!", ContentType.Text.Plain)
+        }
+        route("/api/v1/users"){
+            val userRepository = UserRepository(database)
+            val userService = UserService(userRepository)
+            userRoutes(userService)
         }
     }
 }
