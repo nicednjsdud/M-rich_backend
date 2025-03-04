@@ -31,6 +31,8 @@ dependencies {
     // Logging
     implementation(libs.logback.classic)
 
+    implementation("io.ktor:ktor-client-cio:2.3.5") // HTTP 비동기 요청 지원
+
     // Exposed ORM
     implementation("org.jetbrains.exposed:exposed-core:0.43.0") // ✅ 추가
     implementation("org.jetbrains.exposed:exposed-dao:0.43.0")
