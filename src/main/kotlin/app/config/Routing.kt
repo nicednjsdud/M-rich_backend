@@ -1,22 +1,18 @@
 package app.config
 
+import app.api.mapleRoutes
 import app.api.userRoutes
+import app.domain.maple.service.MapleService
 import app.domain.user.repository.UserRepository
 import app.domain.user.service.UserService
 import app.infrastructure.database.DatabaseFactory
+import io.ktor.client.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.calllogging.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.jetbrains.exposed.sql.*
-import org.slf4j.event.*
 
-fun Application.configureRouting() {
+fun Application.configureRouting(client: HttpClient) {
     val config = environment.config
     val database = DatabaseFactory.init(config)
 
@@ -28,6 +24,10 @@ fun Application.configureRouting() {
             val userRepository = UserRepository(database)
             val userService = UserService(userRepository)
             userRoutes(userService)
+        }
+        route("/api/v1/maple"){
+             val mapleService = MapleService(config, client)
+             mapleRoutes(mapleService)
         }
     }
 }

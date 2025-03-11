@@ -1,5 +1,8 @@
 package app.domain.mapleUser.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class MapleUser(
     val ocid: String,
     val name: String,
