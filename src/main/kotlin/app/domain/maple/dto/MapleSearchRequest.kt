@@ -1,4 +1,4 @@
-package app.domain.mapleUser.dto
+package app.domain.maple.dto
 
 import kotlinx.serialization.Serializable
 
