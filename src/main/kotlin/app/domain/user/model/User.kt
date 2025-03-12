@@ -1,7 +1,9 @@
 package app.domain.user.model
 
+import kotlinx.serialization.Serializable
 import org.mindrot.jbcrypt.BCrypt
 
+@Serializable
 data class User (
     val id: Int? = null,
     val username: String,

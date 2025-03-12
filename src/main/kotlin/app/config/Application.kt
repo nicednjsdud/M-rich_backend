@@ -1,9 +1,13 @@
 package app.config
 
+import app.infrastructure.database.configureDatabases
+import app.infrastructure.serialzation.configureSerialization
 import com.wyc.app.config.configureHTTP
 import com.wyc.app.config.configureMonitoring
-import app.infrastructure.database.configureDatabases
-import com.wyc.app.infrastructure.serialzation.configureSerialization
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 
 fun main(args: Array<String>) {
@@ -11,9 +15,16 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    // ✅ HttpClient 설정
+    val client = HttpClient(CIO) {
+        install(ContentNegotiation){
+            json()
+        }
+    }
+
     configureSerialization()
     configureDatabases()
     configureHTTP()
     configureMonitoring()
-    configureRouting()
+    configureRouting(client)
 }

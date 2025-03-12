@@ -1,4 +1,4 @@
-package com.wyc.app.infrastructure.serialzation
+package app.infrastructure.serialzation
 
 import io.ktor.server.application.*
 import io.ktor.server.response.*

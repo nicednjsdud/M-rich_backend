@@ -22,7 +22,7 @@ dependencies {
     // Ktor
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.ktor.server.content.negotiation)
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.5")
     implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.netty)
@@ -30,6 +30,8 @@ dependencies {
 
     // Logging
     implementation(libs.logback.classic)
+
+    implementation("io.ktor:ktor-client-cio:2.3.5") // HTTP 비동기 요청 지원
 
     // Exposed ORM
     implementation("org.jetbrains.exposed:exposed-core:0.43.0") // ✅ 추가
