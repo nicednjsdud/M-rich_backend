@@ -1,4 +1,4 @@
-package app.domain.maple.model
+package app.domain.maple.model.mapleUser
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MapleUser(
     @SerialName("date") val searchDate: String, // ✅ 조회 기준 날짜
+    @SerialName("ocid") val ocid: String, // ✅ 캐릭터 고유 번호 (ocid
     @SerialName("character_name") val name: String, // ✅ 캐릭터 이름
     @SerialName("world_name") val worldName: String, // ✅ 월드 이름 (서버)
     @SerialName("character_class") val characterClass: String, // ✅ 직업명

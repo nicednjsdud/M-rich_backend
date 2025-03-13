@@ -23,6 +23,20 @@ class UserRepository(private val db: Database){
         }
     }
 
+    suspend fun findByUserId(userId: Int): User? {
+        return newSuspendedTransaction(Dispatchers.IO, db) {
+            UserTable.select { UserTable.id eq userId }
+                .map { row ->
+                    User(
+                        id = row[UserTable.id].value,
+                        username = row[UserTable.username],
+                        password = row[UserTable.password]
+                    )
+                }
+                .singleOrNull()
+        }
+    }
+
     suspend fun create(user: User): Int {
         return newSuspendedTransaction(Dispatchers.IO, db) {
             UserTable.insertAndGetId {
@@ -31,4 +45,6 @@ class UserRepository(private val db: Database){
             }.value
         }
     }
+
+
 }

@@ -1,10 +1,10 @@
-package app.domain.maple.model
+package app.domain.maple.model.mapleUser
 
 import app.domain.user.model.UserTable
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.dao.id.IntIdTable
 
-object MapleUsers : Table("maple_users") {
-    val ocid = varchar("ocid", 50).uniqueIndex() // ✅ 유저 식별자 (고유)
+object MapleUsers : IntIdTable("maple_users") {
+    val ocid = varchar("ocid", 50) // ✅ OCID 추가
     val name = varchar("character_name", 30) // ✅ 캐릭터 이름 (API와 동일한 필드명으로 수정)
     val worldName = varchar("world_name", 30) // ✅ 월드명 (서버명)
     val characterClass = varchar("character_class", 30) // ✅ 직업명

@@ -25,7 +25,7 @@ class MapleServiceTest{
     @Test
     fun `getMapleUserOcid - 실제 닉네임을 요청하면 정상 응답이 와야 한다` () = runBlocking {
         val testNickName = "뵤등"
-        val result = mapleService.getUser(testNickName)
+        val result = mapleService.getMapleUser(testNickName)
 
         assertNotNull(result, "result is null")
         assert(result is APIResult.Success)
@@ -34,7 +34,7 @@ class MapleServiceTest{
     @Test
     fun `getMapleUserOcid - 빈 닉네임을 요청하면 에러 응답이 와야 한다` () = runBlocking {
         val testNickName = ""
-        val result = mapleService.getUser(testNickName)
+        val result = mapleService.getMapleUser(testNickName)
 
         assertNotNull(result, "result is null")
         assert(result is APIResult.Error)
@@ -44,7 +44,7 @@ class MapleServiceTest{
     @Test
     fun `getMapleUserOcid - 잘못된 닉네임을 요청하면 에러 응답이 와야 한다` () = runBlocking {
         val testNickName = "뵤등뵤등"
-        val result = mapleService.getUser(testNickName)
+        val result = mapleService.getMapleUser(testNickName)
 
         assertNotNull(result, "result is null")
         assert(result is APIResult.Error)
