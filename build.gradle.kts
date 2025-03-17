@@ -69,7 +69,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 }
 
-tasks.test {
-    useJUnitPlatform()
-    systemProperty("ktor.config", "src/test/resources/application.yaml") // ✅ 환경 설정 적용 방식 변경
+sourceSets {
+    test {
+        resources.srcDirs("src/test/resources")
+    }
 }
