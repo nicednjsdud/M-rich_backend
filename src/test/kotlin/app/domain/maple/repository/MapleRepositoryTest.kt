@@ -10,7 +10,9 @@ import com.typesafe.config.ConfigFactory
 import io.ktor.server.config.*
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
@@ -38,13 +40,17 @@ class MapleRepositoryTest{
     @AfterEach
     fun tearDown() {
         transaction(database) {
+            MapleUserTable.deleteAll()
+            UserTable.deleteAll()
+        }
+    }
+
+    @AfterAll
+    fun tearDownAll() {
+        transaction {
             SchemaUtils.drop(MapleUserTable)
             SchemaUtils.drop(UserTable)
-
-            SchemaUtils.create(UserTable, MapleUserTable)
         }
-
-
     }
 
     @Test

@@ -2,6 +2,7 @@ package app.domain.maple.model.mapleUser
 
 import app.domain.user.model.UserTable
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 
 object MapleUserTable : IntIdTable("maple_users") {
     val ocid = varchar("ocid", 50) // ✅ OCID 추가
@@ -19,5 +20,5 @@ object MapleUserTable : IntIdTable("maple_users") {
     val isAccessible = bool("access_flag") // ✅ 접근 가능 여부
     val liberationQuestClear = bool("liberation_quest_clear_flag") // ✅ 해방 퀘스트 클리어 여부
     val searchDate = varchar("date", 20) // ✅ 조회 기준일 추가
-    val userId = reference("user_id", UserTable.id) // ✅ 외래키 추가 (UserTable 연결)
+    val userId = reference("user_id", UserTable.id, onDelete = ReferenceOption.CASCADE) // ✅ 외래키 추가 (UserTable 연결)
 }

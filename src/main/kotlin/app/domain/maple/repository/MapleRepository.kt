@@ -37,7 +37,8 @@ class MapleRepository(private val db: Database) {
                         createdDate = row[MapleUserTable.createdDate],
                         isAccessible = row[MapleUserTable.isAccessible],
                         liberationQuestClear = row[MapleUserTable.liberationQuestClear],
-                        searchDate = row[MapleUserTable.searchDate]
+                        searchDate = row[MapleUserTable.searchDate],
+                        userId = row[MapleUserTable.userId].value
                     )
                 }.singleOrNull()
         }

@@ -16,5 +16,6 @@ data class MapleResponse (
     val expRate: String,
     val createdDate: String,
     val isAccessible: Boolean,
-    val liberationQuestClear: Boolean
+    val liberationQuestClear: Boolean,
+    val userId: Int
 )

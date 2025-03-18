@@ -9,6 +9,7 @@ import com.typesafe.config.ConfigFactory
 import io.ktor.server.config.*
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -34,8 +35,14 @@ class UserServiceTest {
     @AfterEach
     fun tearDown() {
         transaction {
+            UserTable.deleteAll()
+        }
+    }
+
+    @AfterAll
+    fun tearDownAll() {
+        transaction {
             SchemaUtils.drop(UserTable)
-            SchemaUtils.create(UserTable)
         }
     }
 
@@ -44,8 +51,9 @@ class UserServiceTest {
         val request = UserCreateRequest("wycUser", "wycPassword123")
         val result = userService.register(request)
 
+        val user = userRepository.findByUsername("wycUser")
         assert(result is APIResult.Success)
-        assertEquals(1, (result as APIResult.Success).data)
+        assertEquals(user?.id, (result as APIResult.Success).data)
     }
 
     @Test
