@@ -4,7 +4,7 @@ import app.domain.user.model.User
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserRegisterRequest(
+data class UserCreateRequest(
     val username: String,
     val password: String
 ) {
