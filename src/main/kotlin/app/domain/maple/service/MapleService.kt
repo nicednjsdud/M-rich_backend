@@ -3,7 +3,6 @@ package app.domain.maple.service
 import app.domain.maple.dto.MapleUserCreateRequest
 import app.domain.maple.model.mapleUser.MapleUser
 import app.domain.maple.repository.MapleRepository
-import app.domain.user.dto.UserRegisterRequest
 import app.domain.user.repository.UserRepository
 import app.utils.APIResult
 import app.utils.APIResult.Error
@@ -15,7 +14,8 @@ import io.ktor.http.*
 import io.ktor.server.config.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json.Default.decodeFromJsonElement
 import org.slf4j.LoggerFactory
 import java.net.URLEncoder
 import java.time.LocalDate
@@ -27,8 +27,8 @@ class MapleService(config: ApplicationConfig,
                    private val userRepository: UserRepository
 ) {
     private val logger = LoggerFactory.getLogger(MapleService::class.java)
-    private val apiKey: String = config.property("maple.apiKey").getString()
-
+//    private val apiKey: String = config.property("maple.apiKey").getString()
+    private val apiKey: String = "1234"
     suspend fun getMapleUser(nickname: String): APIResult<MapleUser, String> {
         if (nickname.isBlank()) return Error("닉네임을 입력해주세요.")
 
@@ -84,8 +84,11 @@ class MapleService(config: ApplicationConfig,
             if (response.status == HttpStatusCode.OK) {
                 val responseText = response.body<String>()
                 logger.info("✅ 유저 기본 정보 응답 수신")
-
-                val user = Json.decodeFromString<MapleUser>(responseText)
+                val jsonElement = Json.parseToJsonElement(responseText).jsonObject
+                val updatedJson = jsonElement.toMutableMap().apply {
+                    put("ocid", JsonPrimitive(ocid)) // ocid 추가
+                }.toMap()
+                val user = Json.decodeFromJsonElement<MapleUser>(JsonObject(updatedJson))
                 return user
             } else {
                 logger.warn("⚠️ 유저 정보 조회 실패 (HTTP ${response.status})")

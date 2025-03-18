@@ -12,10 +12,9 @@ object DatabaseFactory {
     fun init(config: ApplicationConfig): Database {
         // ✅ 설정값이 존재하지 않을 경우 기본값 설정
         val url = config.propertyOrNull("database.url")?.getString() ?: "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
-        val user = config.propertyOrNull("database.user")?.getString() ?: "root"
-        val password = config.propertyOrNull("database.password")?.getString() ?: "1234"
+        val user = config.propertyOrNull("database.user")?.getString() ?: "sa"
+        val password = config.propertyOrNull("database.password")?.getString() ?: ""
         val driver = config.propertyOrNull("database.driverClassName")?.getString() ?: "org.h2.Driver"
-
         logger.info("✅ Connecting to database: $url with driver: $driver")
 
 

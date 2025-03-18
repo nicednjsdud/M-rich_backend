@@ -1,10 +1,11 @@
 package app.domain.user.service
 
-import app.domain.user.dto.UserRegisterRequest
+import app.domain.user.dto.UserCreateRequest
 import app.domain.user.model.UserTable
 import app.domain.user.repository.UserRepository
 import app.infrastructure.database.DatabaseFactory
 import app.utils.APIResult
+import com.typesafe.config.ConfigFactory
 import io.ktor.server.config.*
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -18,14 +19,8 @@ class UserServiceTest {
     private lateinit var userService: UserService
     private lateinit var userRepository: UserRepository
 
-    // ✅ H2 인메모리 DB 설정
-    private val testConfig = MapApplicationConfig().apply {
-        put("database.url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
-        put("database.user", "sa")
-        put("database.password", "")
-        put("database.driverClassName", "org.h2.Driver")
-    }
-    private val database = DatabaseFactory.init(testConfig)
+    private val config = HoconApplicationConfig(ConfigFactory.load("application.yaml"))
+    private val database = DatabaseFactory.init(config)
 
     @BeforeAll
     fun setUp() {
@@ -46,7 +41,7 @@ class UserServiceTest {
 
     @Test
     fun `registerUser - 새로운 유저를 등록하면 ID를 반환해야 한다`() = runBlocking {
-        val request = UserRegisterRequest("wycUser", "wycPassword123")
+        val request = UserCreateRequest("wycUser", "wycPassword123")
         val result = userService.register(request)
 
         assert(result is APIResult.Success)
@@ -55,7 +50,7 @@ class UserServiceTest {
 
     @Test
     fun `registerUser - 중복된 유저를 등록하면 예외가 발생해야 한다`() = runBlocking {
-        val request = UserRegisterRequest("wycUser", "wycPassword123")
+        val request = UserCreateRequest("wycUser", "wycPassword123")
         userService.register(request)
 
         val result = userService.register(request)
@@ -67,7 +62,7 @@ class UserServiceTest {
 
     @Test
     fun `loginUser - 올바른 정보로 로그인하면 토큰을 반환해야 한다`() = runBlocking {
-        val request = UserRegisterRequest("wycUser", "wycPassword123")
+        val request = UserCreateRequest("wycUser", "wycPassword123")
         val register = userService.register(request)
 
         val result = userService.login(request);
@@ -78,10 +73,10 @@ class UserServiceTest {
 
     @Test
     fun `loginUser - 잘못된 비밀번호로 로그인하면 실패해야 한다`() = runBlocking {
-        val request = UserRegisterRequest("wycUser", "wycPassword123")
+        val request = UserCreateRequest("wycUser", "wycPassword123")
         userService.register(request)
 
-        val result = userService.login(UserRegisterRequest("wycUser", "wrongPassword"))
+        val result = userService.login(UserCreateRequest("wycUser", "wrongPassword"))
 
         assert(result is APIResult.Error)
         assertEquals("비밀번호가 일치하지 않습니다.", (result as APIResult.Error).error)
@@ -89,7 +84,7 @@ class UserServiceTest {
 
     @Test
     fun `loginUser - 존재하지 않는 유저로 로그인하면 실패해야 한다`() = runBlocking {
-        val request = UserRegisterRequest("wycUser", "wycPassword123")
+        val request = UserCreateRequest("wycUser", "wycPassword123")
 
         val result = userService.login(request)
 

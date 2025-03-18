@@ -1,7 +1,6 @@
 package app.domain.user.service
 
-import app.domain.user.dto.UserRegisterRequest
-import app.domain.user.model.User
+import app.domain.user.dto.UserCreateRequest
 import app.domain.user.repository.UserRepository
 import app.utils.APIResult
 import kotlinx.coroutines.Dispatchers
@@ -9,7 +8,7 @@ import kotlinx.coroutines.withContext
 
 class UserService(private val userRepository: UserRepository) {
 
-    suspend fun register(request: UserRegisterRequest): APIResult<Int, String> {
+    suspend fun register(request: UserCreateRequest): APIResult<Int, String> {
         return withContext(Dispatchers.IO) {
             val existingUser = userRepository.findByUsername(request.username)
 
@@ -25,7 +24,7 @@ class UserService(private val userRepository: UserRepository) {
         }
     }
 
-    suspend fun login(request: UserRegisterRequest): APIResult<String, String> {
+    suspend fun login(request: UserCreateRequest): APIResult<String, String> {
         return withContext(Dispatchers.IO) {
             val user = userRepository.findByUsername(request.username)
                 ?: return@withContext APIResult.Error("사용자를 찾을 수 없습니다.")

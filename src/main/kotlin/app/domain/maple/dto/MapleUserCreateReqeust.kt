@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MapleUserCreateRequest (
-
     val searchDate: String, // ✅ 조회 기준 날짜
     val ocid: String, // ✅ 캐릭터 고유 번호 (ocid
     val name: String, // ✅ 캐릭터 이름
@@ -21,5 +20,4 @@ data class MapleUserCreateRequest (
     val createdDate: String, // ✅ 캐릭터 생성일
     val isAccessible: Boolean, // ✅ 접근 가능 여부
     val liberationQuestClear: Boolean // ✅ 해방 퀘스트 클리어 여부
-
 )

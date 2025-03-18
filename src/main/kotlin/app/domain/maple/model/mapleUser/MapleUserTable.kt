@@ -19,5 +19,5 @@ object MapleUserTable : IntIdTable("maple_users") {
     val isAccessible = bool("access_flag") // ✅ 접근 가능 여부
     val liberationQuestClear = bool("liberation_quest_clear_flag") // ✅ 해방 퀘스트 클리어 여부
     val searchDate = varchar("date", 20) // ✅ 조회 기준일 추가
-    val userId = reference("user_id", UserTable.id).nullable() // ✅ 외래키 추가 (UserTable 연결)
+    val userId = reference("user_id", UserTable.id) // ✅ 외래키 추가 (UserTable 연결)
 }
