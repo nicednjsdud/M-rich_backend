@@ -28,7 +28,7 @@ class MapleService(config: ApplicationConfig,
 ) {
     private val logger = LoggerFactory.getLogger(MapleService::class.java)
 //    private val apiKey: String = config.property("maple.apiKey").getString()
-    private val apiKey: String = "1234"
+    private val apiKey: String = "test_2a550831e8b2c1a4360fce104d32a4958e07a625226f41463ce7c72d466dce8fefe8d04e6d233bd35cf2fabdeb93fb0d"
     suspend fun getMapleUser(nickname: String): APIResult<MapleUser, String> {
         if (nickname.isBlank()) return Error("닉네임을 입력해주세요.")
 

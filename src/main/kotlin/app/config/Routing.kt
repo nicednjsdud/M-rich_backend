@@ -5,6 +5,7 @@ import app.api.ocrRoutes
 import app.api.userRoutes
 import app.domain.maple.repository.MapleRepository
 import app.domain.maple.service.MapleService
+import app.domain.ocr.service.OcrService
 import app.domain.user.repository.UserRepository
 import app.domain.user.service.UserService
 import app.infrastructure.database.DatabaseFactory
@@ -22,6 +23,7 @@ fun Application.configureRouting(client: HttpClient) {
     val userService = UserService(userRepository)
     val mapleRepository = MapleRepository(database)
     val mapleService = MapleService(config, client, mapleRepository, userRepository)
+    val ocrService = OcrService()
 
     routing {
         get("/") {
@@ -37,7 +39,7 @@ fun Application.configureRouting(client: HttpClient) {
         }
 
         route("/api/v1/ocrTest") {
-            ocrRoutes()
+            ocrRoutes(ocrService)
         }
     }
 }
