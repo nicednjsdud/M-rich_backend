@@ -78,13 +78,11 @@ dependencies {
     // Tessearct OCR
     implementation("net.sourceforge.tess4j:tess4j:5.4.0")
     // OpenCV
-    implementation("org.bytedeco:javacv:1.5.9")
     implementation("org.bytedeco:opencv:4.7.0-1.5.9")
     implementation("org.bytedeco:opencv-platform:4.7.0-1.5.9")
-
-
-
-
+    implementation("org.bytedeco:javacpp:1.5.9")
+    implementation("org.bytedeco:openblas:0.3.23-1.5.9")
+    implementation("org.bytedeco:openblas-platform:0.3.23-1.5.9")
 }
 
 sourceSets {
@@ -95,4 +93,10 @@ sourceSets {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.withType<JavaExec> {
+    jvmArgs = listOf(
+        "-Djava.library.path=${System.getProperty("java.library.path")}"
+    )
 }

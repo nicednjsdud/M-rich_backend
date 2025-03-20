@@ -1,6 +1,5 @@
 package app.domain.ocr.service
 
-import app.utils.ImagePreprocessor
 import net.sourceforge.tess4j.Tesseract
 import net.sourceforge.tess4j.TesseractException
 import java.io.File
