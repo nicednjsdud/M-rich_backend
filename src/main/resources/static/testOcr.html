@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR 테스트</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #preview { max-width: 300px; margin-top: 20px; }
+        #result { margin-top: 20px; padding: 10px; border: 1px solid #ccc; display: none; }
+    </style>
+</head>
+<body>
+
+<h1>OCR 테스트</h1>
+<form id="uploadForm">
+    <input type="file" id="fileInput" accept="image/*" required>
+    <button type="submit">업로드 및 OCR 실행</button>
+</form>
+
+<h2>미리보기</h2>
+<img id="preview" src="#" alt="이미지 미리보기" style="display:none;">
+
+<h2>OCR 결과</h2>
+<div id="result"></div>
+
+<script>
+    document.getElementById("fileInput").addEventListener("change", function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById("preview").src = e.target.result;
+                document.getElementById("preview").style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById("uploadForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const fileInput = document.getElementById("fileInput");
+        if (!fileInput.files.length) {
+            alert("이미지를 선택해주세요.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        try {
+            const response = await fetch("/api/v1/ocrTest/ocr", {
+                method: "POST",
+                body: formData
+            });
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById("result").textContent = data.extracted_text;
+                document.getElementById("result").style.display = "block";
+            } else {
+                alert("OCR 처리 실패!");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("OCR 요청 중 오류 발생!");
+        }
+    });
+</script>
+
+</body>
+</html>
