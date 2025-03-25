@@ -10,6 +10,7 @@ import app.domain.user.repository.UserRepository
 import app.domain.user.service.UserService
 import app.infrastructure.database.DatabaseFactory
 import io.ktor.client.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*

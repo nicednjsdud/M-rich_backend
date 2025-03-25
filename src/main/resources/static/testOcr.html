@@ -52,15 +52,20 @@
         try {
             const response = await fetch("/api/v1/ocrTest/ocr", {
                 method: "POST",
-                body: formData
+                body: formData,
+                headers: {
+                    "Accept": "application/json"
+                }
             });
             if (response.ok) {
                 const data = await response.json();
-                document.getElementById("result").textContent = data.extracted_text;
+                console.log(data);
+                document.getElementById("result").textContent = JSON.stringify(data, null, 2);
                 document.getElementById("result").style.display = "block";
             } else {
                 alert("OCR 처리 실패!");
             }
+
         } catch (error) {
             console.error("Error:", error);
             alert("OCR 요청 중 오류 발생!");

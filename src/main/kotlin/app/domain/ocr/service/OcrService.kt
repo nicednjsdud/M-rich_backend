@@ -1,76 +1,81 @@
 package app.domain.ocr.service
 
-import net.sourceforge.tess4j.Tesseract
-import net.sourceforge.tess4j.TesseractException
+import com.google.cloud.vision.v1.AnnotateImageRequest
+import com.google.cloud.vision.v1.Feature
+import com.google.cloud.vision.v1.Image
+import com.google.cloud.vision.v1.ImageAnnotatorClient
+import com.google.protobuf.ByteString
 import java.io.File
 
 class OcrService {
-    private val tesseract: Tesseract = Tesseract()
-
-    init {
-        // 환경 변수 설정
-        System.setProperty("jna.library.path", "/opt/homebrew/lib")
-        System.setProperty("TESSDATA_PREFIX", "/opt/homebrew/share/tessdata/")
-        System.setProperty("java.library.path", "/opt/homebrew/lib")
-
-        // Tesseract 설정
-        tesseract.setDatapath("/opt/homebrew/share/tessdata/") // 데이터 경로 설정 (Mac ARM)
-        tesseract.setLanguage("kor+eng") // 한국어 + 영어 설정
-    }
 
     fun extractTableData(imageFile: File): List<Map<String, String>> {
         return try {
-            // 이미지 전처리 수행 후 저장된 이미지 경로
-            val preprocessedFile = File("uploads/preprocessed.png")
-
-            // 이미지 전처리 수행
-            ImagePreprocessor.preprocessImage(imageFile.absolutePath, preprocessedFile.absolutePath)
-
-            // OCR 수행 (전처리된 이미지 사용)
-            val extractedText = tesseract.doOCR(preprocessedFile)
-
-            parseTableData(extractedText)
-        } catch (e: TesseractException) {
+            val ocrText = extractTextFromImage(imageFile.absolutePath)
+            println("OCR 결과: $ocrText")
+            return parseTableData(ocrText)
+        } catch (e: Exception) {
             println("OCR 처리 중 오류 발생: ${e.message}")
             emptyList()
+        } finally {
+            imageFile.delete()
         }
     }
 
-    private fun parseTableData(ocrText: String): List<Map<String, String>> {
-        println("OCR 추출 텍스트: $ocrText")
+    private fun extractTextFromImage(imagePath: String): String {
+        val imgBytes = ByteString.readFrom(File(imagePath).inputStream())
+        val image = Image.newBuilder().setContent(imgBytes).build()
+        val feature = Feature.newBuilder().setType(Feature.Type.TEXT_DETECTION).build()
+        val request = AnnotateImageRequest.newBuilder()
+            .addFeatures(feature)
+            .setImage(image)
+            .build()
+
+        ImageAnnotatorClient.create().use { vision ->
+            val response = vision.batchAnnotateImages(listOf(request))
+            val annotation = response.responsesList[0].fullTextAnnotation
+            return annotation?.text ?: "텍스트 없음"
+        }
+    }
+
+    fun parseTableData(ocrText: String): List<Map<String, String>> {
         val tableData = mutableListOf<Map<String, String>>()
         val lines = ocrText.split("\n").map { it.trim() }.filter { it.isNotEmpty() }
 
-        // 거래 날짜 정규식 (YYYY-MM-DD)
         val dateRegex = Regex("""\d{4}-\d{2}-\d{2}""")
-        var currentDate = ""
+        val firstDateIndex = lines.indexOfFirst { dateRegex.containsMatchIn(it) }
+        if (firstDateIndex == -1) return emptyList() // 날짜 형식이 없으면 종료
 
-        for (line in lines) {
+        val dataLines = lines.drop(firstDateIndex)
+
+        var currentDate = ""
+        var tempItem = mutableListOf<String>()
+
+        for (line in dataLines) {
             val dateMatch = dateRegex.find(line)
             if (dateMatch != null) {
                 currentDate = dateMatch.value
                 continue
             }
 
-            // 데이터 추출
-            val itemRegex = Regex("""(.+?)\s+(판매 완료|판매 중|대기 중)\s+([\d,]+)\s+(대금수령|처리 없음)""")
-            val matchEtc = itemRegex.find(line)
+            tempItem.add(line)
 
-            if (matchEtc != null) {
-                val (item, status, price, action) = matchEtc.destructured
-                if (currentDate.isNotEmpty()) {
-                    tableData.add(
-                        mapOf(
-                            "거래날짜" to currentDate,
-                            "아이템이름" to item.trim(),
-                            "상태" to status.trim(),
-                            "금액" to price.trim(),
-                            "처리" to action.trim()
-                        )
+            if (tempItem.size >= 4) {
+                val (itemName, priceText, status, process) = tempItem.take(4)
+                tableData.add(
+                    mapOf(
+                        "거래날짜" to currentDate,
+                        "아이템이름" to itemName,
+                        "금액" to priceText.replace("[^\\d,]", ""),
+                        "상태" to status,
+                        "처리" to process
                     )
-                }
+                )
+                tempItem.clear()
             }
         }
+
         return tableData
     }
+
 }
