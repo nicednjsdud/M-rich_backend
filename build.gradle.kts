@@ -30,6 +30,7 @@ dependencies {
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation("io.ktor:ktor-client-content-negotiation:2.3.5")
+    implementation("io.ktor:ktor-server-content-negotiation:2.3.5")
     implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.netty)
