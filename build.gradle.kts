@@ -30,6 +30,7 @@ dependencies {
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation("io.ktor:ktor-client-content-negotiation:2.3.5")
+    implementation("io.ktor:ktor-server-content-negotiation:2.3.5")
     implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.netty)
@@ -75,14 +76,8 @@ dependencies {
     // Kotlin 테스트 지원
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 
-    // Tessearct OCR
-    implementation("net.sourceforge.tess4j:tess4j:5.4.0")
-    // OpenCV
-    implementation("org.bytedeco:opencv:4.7.0-1.5.9")
-    implementation("org.bytedeco:opencv-platform:4.7.0-1.5.9")
-    implementation("org.bytedeco:javacpp:1.5.9")
-    implementation("org.bytedeco:openblas:0.3.23-1.5.9")
-    implementation("org.bytedeco:openblas-platform:0.3.23-1.5.9")
+    // OCR
+    implementation("com.google.cloud:google-cloud-vision:3.31.0")
 }
 
 sourceSets {
