@@ -14,7 +14,7 @@ class MapleRepository(private val db: Database) {
 
     suspend fun isExists(userId: Int): Boolean = newSuspendedTransaction(Dispatchers.IO, db) {
         MapleUserTable.select { MapleUserTable.userId eq userId }
-            .empty().not() // ✅ 데이터가 있으면 true, 없으면 false 반환
+            .empty().not()
     }
 
     suspend fun findById(id: Int): MapleResponse? {
