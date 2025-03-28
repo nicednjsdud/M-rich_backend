@@ -13,23 +13,33 @@ import io.ktor.server.routing.*
 fun Route.tradeHistoryRoutes(tradeHistoryService: TradeHistoryService) {
     // 전체 조회
     get {
-        tradeHistoryService.findAll()
+        val userId = 1
+        tradeHistoryService.findAllByUserId(userId)
             .onSuccess { call.respond(HttpStatusCode.OK, it) }
             .onError { call.respond(HttpStatusCode.BadRequest, mapOf("error" to it)) }
     }
 
-    // 저장 & 수정
+    // 저장
     post {
         val items = call.receive<List<TradeHistoryRequest>>()
-        tradeHistoryService.saveAndUpdate(items)
-            .onSuccess { call.respond(HttpStatusCode.Created, mapOf("message" to "저장/수정 완료")) }
+        val userId = 1
+        tradeHistoryService.save(items, userId)
+            .onSuccess { call.respond(HttpStatusCode.Created, mapOf("message" to "저장 완료")) }
+            .onError { call.respond(HttpStatusCode.BadRequest, mapOf("error" to it)) }
+    }
+
+    // 수정
+    put {
+        val items = call.receive<List<TradeHistoryRequest>>()
+        tradeHistoryService.update(items)
+            .onSuccess { call.respond(HttpStatusCode.OK, mapOf("message" to "수정 완료")) }
             .onError { call.respond(HttpStatusCode.BadRequest, mapOf("error" to it)) }
     }
 
     // 삭제
     delete {
         val items = call.receive<List<TradeHistoryRequest>>()
-        tradeHistoryService.deleteChecked(items)
+        tradeHistoryService.delete(items)
             .onSuccess { call.respond(HttpStatusCode.OK, mapOf("message" to "삭제 완료")) }
             .onError { call.respond(HttpStatusCode.BadRequest, mapOf("error" to it)) }
     }

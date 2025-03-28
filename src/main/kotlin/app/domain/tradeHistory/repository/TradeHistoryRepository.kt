@@ -16,8 +16,9 @@ class TradeHistoryRepository(private val db: Database) {
         TradeHistoryTable.select { TradeHistoryTable.id eq id }.map { TradeHistory.fromRow(it) }.firstOrNull()
     }
 
-    suspend fun findAll(): List<TradeHistory> = newSuspendedTransaction(Dispatchers.IO, db) {
-        TradeHistoryTable.selectAll().map { TradeHistory.fromRow(it) }
+    suspend fun findAllByUserId(userId : Int): List<TradeHistory> = newSuspendedTransaction(Dispatchers.IO, db) {
+        TradeHistoryTable.select(TradeHistoryTable.userId eq userId)
+            .map { TradeHistory.fromRow(it) }
     }
 
     suspend fun save(item: TradeHistoryRequest, userId: Int) = newSuspendedTransaction(Dispatchers.IO, db) {
