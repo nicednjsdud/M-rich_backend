@@ -13,11 +13,12 @@ class TradeHistoryService(
     }
 
     suspend fun saveAndUpdate(items: List<TradeHistoryRequest>): APIResult<String, String> {
+        var userId = 1
         items.filter { it.isChecked }.forEach { item ->
             if (item.id != null) {
                 tradeHistoryRepository.update(item)
             } else {
-                tradeHistoryRepository.save(item)
+                tradeHistoryRepository.save(item,userId)
             }
         }
         return APIResult.Success("저장되었습니다.")
