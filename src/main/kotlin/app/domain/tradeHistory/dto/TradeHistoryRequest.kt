@@ -9,7 +9,6 @@ data class TradeHistoryRequest (
     val price: Int,
     val korPrice: String,
     val status: TradeStatus,
-    val userId: Int,
     val isChecked: Boolean = false,
     val isDeleted: Boolean = false
 )
