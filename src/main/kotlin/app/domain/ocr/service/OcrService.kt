@@ -1,5 +1,7 @@
 package app.domain.ocr.service
 
+import app.domain.ocr.dto.OcrResponse
+import app.utils.TradeStatus
 import com.google.cloud.vision.v1.AnnotateImageRequest
 import com.google.cloud.vision.v1.Feature
 import com.google.cloud.vision.v1.Image
@@ -9,7 +11,7 @@ import java.io.File
 
 class OcrService {
 
-    fun extractTableData(imageFile: File): List<Map<String, String>> {
+    fun extractTableData(imageFile: File): List<OcrResponse> {
         return try {
             val ocrText = extractTextFromImage(imageFile.absolutePath)
             println("OCR 결과: $ocrText")
@@ -38,44 +40,55 @@ class OcrService {
         }
     }
 
-    fun parseTableData(ocrText: String): List<Map<String, String>> {
-        val tableData = mutableListOf<Map<String, String>>()
-        val lines = ocrText.split("\n").map { it.trim() }.filter { it.isNotEmpty() }
+    fun parseTableData(ocrText: String): List<OcrResponse> {
+        val result = mutableListOf<OcrResponse>()
+        val lines = ocrText.lines().map { it.trim() }.filter { it.isNotEmpty() }
 
         val dateRegex = Regex("""\d{4}-\d{2}-\d{2}""")
-        val firstDateIndex = lines.indexOfFirst { dateRegex.containsMatchIn(it) }
-        if (firstDateIndex == -1) return emptyList() // 날짜 형식이 없으면 종료
-
-        val dataLines = lines.drop(firstDateIndex)
+        val priceRegex = Regex("""[\d,]{3,}""")
+        val korPriceRegex = Regex("""\(\d+억\s?\d+만\s?\d+\)""")
 
         var currentDate = ""
-        var tempItem = mutableListOf<String>()
+        var i = 0
 
-        for (line in dataLines) {
-            val dateMatch = dateRegex.find(line)
-            if (dateMatch != null) {
-                currentDate = dateMatch.value
-                continue
-            }
+        while (i < lines.size) {
+            val line = lines[i]
 
-            tempItem.add(line)
+            // 날짜로 시작하는 블록 시작
+            if (dateRegex.matches(line)) {
+                currentDate = line
+                val itemName = lines.getOrNull(i + 1) ?: ""
+                val statusLine = lines.getOrNull(i + 2) ?: ""
+                val priceLine = lines.getOrNull(i + 3) ?: ""
+                val korPriceLine = lines.getOrNull(i + 4)?.takeIf { korPriceRegex.containsMatchIn(it) } ?: ""
+                val finalPriceLine = if (korPriceLine.isNotEmpty()) lines.getOrNull(i + 5) else lines.getOrNull(i + 4)
 
-            if (tempItem.size >= 4) {
-                val (itemName, priceText, status, process) = tempItem.take(4)
-                tableData.add(
-                    mapOf(
-                        "거래날짜" to currentDate,
-                        "아이템이름" to itemName,
-                        "금액" to priceText.replace("[^\\d,]", ""),
-                        "상태" to status,
-                        "처리" to process
+                // 가격 확인
+                val price = priceLine.replace("[^\\d]", "").toIntOrNull()
+                    ?: finalPriceLine?.replace("[^\\d]", "")?.toIntOrNull() ?: 0
+
+                // 상태 확인
+                val status = when {
+                    statusLine.contains("판매") -> TradeStatus.COMPLETE
+                    else -> TradeStatus.CANCEL
+                }
+
+                result.add(
+                    OcrResponse(
+                        tradeDate = currentDate,
+                        itemName = itemName,
+                        price = price,
+                        korPrice = korPriceLine,
+                        status = status
                     )
                 )
-                tempItem.clear()
+
+                // 다음 블록으로 이동
+                i += if (korPriceLine.isNotEmpty()) 6 else 5
+            } else {
+                i++
             }
         }
-
-        return tableData
+        return result
     }
-
 }

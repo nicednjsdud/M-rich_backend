@@ -34,5 +34,4 @@ fun Route.ocrRoutes(ocrService: OcrService) {
             call.respond(HttpStatusCode.BadRequest, "파일이 업로드되지 않았습니다.")
         }
     }
-
 }
