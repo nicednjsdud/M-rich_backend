@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.ReferenceOption
 
 
 object TradeHistoryTable : IntIdTable("trade_history") {
-    val tradeDate = varchar("trade_date", 20) // ✅ 거래일
+    val tradeDate = varchar("trade_date", 30) // ✅ 거래일
     val itemName = varchar("item_name", 50) // ✅ 아이템명
     val price = integer("price") // ✅ 가격
     val korPrice = varchar("kor_price", 20) // ✅ 한화 가격
