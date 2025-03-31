@@ -4,6 +4,7 @@ import app.domain.maple.dto.MapleUserCreateRequest
 import app.domain.maple.model.mapleUser.MapleUserTable
 import app.domain.maple.repository.MapleRepository
 import app.domain.user.dto.UserCreateRequest
+import app.domain.user.model.User
 import app.domain.user.model.UserTable
 import app.domain.user.repository.UserRepository
 import app.infrastructure.database.DatabaseFactory
@@ -27,7 +28,7 @@ import kotlin.test.Test
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MapleServiceTest{
-    private val config = HoconApplicationConfig(ConfigFactory.load("application.yaml"))
+    private val config = HoconApplicationConfig(ConfigFactory.load("application-test.conf"))
 
     private val client = HttpClient(CIO){
         install(ContentNegotiation){
@@ -120,7 +121,7 @@ class MapleServiceTest{
         )
 
         // When
-        val user = userCreateRequest.toUser().hashPassword()
+        val user = User.create(userCreateRequest.username, userCreateRequest.password)
         val userId = userRepository.create(user)
 
         mapleService.createAndUpdate(initialRequest, userId)
@@ -174,7 +175,7 @@ class MapleServiceTest{
 
         // When
 
-        val user = userCreateRequest.toUser().hashPassword()
+        val user = User.create(userCreateRequest.username, userCreateRequest.password)
         val userId = userRepository.create(user)
 
         mapleService.createAndUpdate(initialRequest, userId)

@@ -3,6 +3,7 @@ package app.domain.maple.repository
 import app.domain.maple.dto.MapleUserCreateRequest
 import app.domain.maple.model.mapleUser.MapleUserTable
 import app.domain.user.dto.UserCreateRequest
+import app.domain.user.model.User
 import app.domain.user.model.UserTable
 import app.domain.user.repository.UserRepository
 import app.infrastructure.database.DatabaseFactory
@@ -22,7 +23,7 @@ import kotlin.test.Test
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MapleRepositoryTest{
 
-    private val config = HoconApplicationConfig(ConfigFactory.load("application.yaml"))
+    private val config = HoconApplicationConfig(ConfigFactory.load("application-test.conf"))
 
     private val database = DatabaseFactory.init(config)
     private lateinit var userRepository: UserRepository
@@ -76,7 +77,7 @@ class MapleRepositoryTest{
         )
 
         // When
-        val user = userCreateRequest.toUser().hashPassword()
+        val user = User.create(userCreateRequest.username, userCreateRequest.password)
         val userId = userRepository.create(user)
 
         mapleRepository.insert(request, userId)
@@ -119,7 +120,7 @@ class MapleRepositoryTest{
         )
 
         // When
-        val user = userCreateRequest.toUser().hashPassword()
+        val user = User.create(userCreateRequest.username, userCreateRequest.password)
         val userId = userRepository.create(user)
 
         mapleRepository.insert(initialRequest, userId) // 초기 데이터 삽입

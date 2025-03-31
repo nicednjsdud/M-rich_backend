@@ -3,6 +3,7 @@ package app.domain.user.repository
 import app.domain.user.model.User
 import app.domain.user.model.UserTable
 import app.infrastructure.database.DatabaseFactory
+import com.typesafe.config.ConfigFactory
 import io.ktor.server.config.*
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -21,14 +22,8 @@ class UserRepositoryTest {
 
     private lateinit var userRepository: UserRepository
 
-    // 테스트용 H2 인메모리 DB 설정
-    private val testConfig = MapApplicationConfig().apply {
-        put("database.url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
-        put("database.user", "sa")
-        put("database.password", "")
-        put("database.driverClassName", "org.h2.Driver")
-    }
-    private val database = DatabaseFactory.init(testConfig)
+    private val config = HoconApplicationConfig(ConfigFactory.load("application-test.conf"))
+    private val database = DatabaseFactory.init(config)
 
     @BeforeAll
     fun setUp() {

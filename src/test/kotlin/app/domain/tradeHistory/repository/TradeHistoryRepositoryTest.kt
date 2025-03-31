@@ -26,7 +26,7 @@ import kotlin.test.Test
 
 class TradeHistoryRepositoryTest {
 
-    private val config = HoconApplicationConfig(ConfigFactory.load("application.yaml"))
+    private val config = HoconApplicationConfig(ConfigFactory.load("application-test.conf"))
 
     private val database = DatabaseFactory.init(config)
     private lateinit var tradeHistoryRepository: TradeHistoryRepository
