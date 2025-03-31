@@ -1,4 +1,4 @@
-package com.wyc.app.config
+package app.config
 
 import io.ktor.http.*
 import io.ktor.server.application.*
