@@ -1,6 +1,6 @@
 package app.api
 
-import app.domain.user.dto.RefreshRequest
+import app.domain.auth.dto.RefreshRequest
 import app.domain.user.dto.UserCreateRequest
 import app.domain.user.service.UserService
 import app.utils.onError
@@ -15,21 +15,6 @@ fun Route.userRoutes(userService: UserService) {
         val request = call.receive<UserCreateRequest>()
         userService.register(request)
             .onSuccess { call.respond(HttpStatusCode.Created, mapOf("id" to it)) }
-            .onError { call.respond(HttpStatusCode.BadRequest, mapOf("error" to it)) }
-    }
-
-    post("/login") {
-        val request = call.receive<UserCreateRequest>()
-        userService.login(request)
-            .onSuccess { call.respond(HttpStatusCode.OK, mapOf("token" to it)) }
-            .onError { call.respond(HttpStatusCode.BadRequest, mapOf("error" to it)) }
-    }
-
-    post("/refresh") {
-        val request = call.receive<RefreshRequest>()
-
-        userService.refresh(request)
-            .onSuccess { call.respond(HttpStatusCode.OK, mapOf("token" to it)) }
             .onError { call.respond(HttpStatusCode.BadRequest, mapOf("error" to it)) }
     }
 }
