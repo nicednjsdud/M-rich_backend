@@ -39,4 +39,21 @@ class AuthRepository {
             RedisConfig.commands.del("refresh:$userId")
         }
     }
+
+    /**
+     * Refresh Token을 통해 유저 ID 조회
+     * @param refreshToken 리프레시 토큰
+     * @return 유저 ID (없을 시 null)
+     */
+    fun findUserIdByToken(refreshToken: String): Int? {
+        RedisConfig.commands.keys("refresh:*").forEach { key ->
+            val userId = key.split(":").last().toInt()
+            val token = RedisConfig.commands.get(key)
+
+            if (token == refreshToken) {
+                return userId
+            }
+        }
+        return null
+    }
 }

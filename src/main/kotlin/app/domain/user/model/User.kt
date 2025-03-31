@@ -10,14 +10,16 @@ data class User (
     val password: String
 ){
 
-    // 비밀번호 해싱
-    fun hashPassword(): User {
-        val hashedPassword = BCrypt.hashpw(this.password, BCrypt.gensalt())
-        return this.copy(password = hashedPassword)
+    companion object {
+        fun create(username: String, rawPassword: String): User {
+            return User(null, username, BCrypt.hashpw(rawPassword, BCrypt.gensalt()))
+        }
     }
+
 
     // 비밀번호 검증
     fun checkPassword(password: String): Boolean {
+        // 저장된 비밀번호와 입력된 비밀번호를 비교
         return BCrypt.checkpw(password, this.password)
     }
 }
