@@ -1,6 +1,7 @@
 package app.config
 
 import app.infrastructure.database.configureDatabases
+import app.infrastructure.redis.RedisConfig
 import app.infrastructure.serialzation.configureSerialization
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -17,6 +18,9 @@ fun Application.module() {
     // ✅ JWT 설정
     val config = environment.config
     JwtConfig.init(config)
+
+    // ✅ Redis 설정
+    RedisConfig.init(config)
 
     // ✅ 서버 ContentNegotiation 설정
     install(io.ktor.server.plugins.contentnegotiation.ContentNegotiation) {

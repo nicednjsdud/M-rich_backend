@@ -82,6 +82,10 @@ dependencies {
     // JWT
     implementation("io.ktor:ktor-server-auth:1.6.0")
     implementation("io.ktor:ktor-server-auth-jwt:1.6.0")
+
+    // Redis
+    implementation("io.lettuce:lettuce-core:6.2.5.RELEASE")
+
 }
 
 sourceSets {
