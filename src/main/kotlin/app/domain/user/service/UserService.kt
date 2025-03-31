@@ -1,6 +1,7 @@
 package app.domain.user.service
 
 import app.config.JwtConfig
+import app.domain.auth.repository.AuthRepository
 import app.domain.user.dto.LoginResponse
 import app.domain.user.dto.RefreshRequest
 import app.domain.user.dto.UserCreateRequest
@@ -9,7 +10,7 @@ import app.utils.APIResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class UserService(private val userRepository: UserRepository) {
+class UserService(private val userRepository: UserRepository, private val authRepository: AuthRepository) {
 
     suspend fun register(request: UserCreateRequest): APIResult<Int, String> {
         return withContext(Dispatchers.IO) {
@@ -48,10 +49,14 @@ class UserService(private val userRepository: UserRepository) {
         }
     }
 
-    private fun createToken(userId: Int): LoginResponse {
+    private suspend fun createToken(userId: Int): LoginResponse {
+        val accessToken = JwtConfig.createAccessToken(userId)
+        val refreshToken = JwtConfig.createRefreshToken(userId)
+
+        authRepository.save(userId, refreshToken, JwtConfig.getRefreshTokenExpiration())
         return LoginResponse(
-            accessToken = JwtConfig.createAccessToken(userId),
-            refreshToken = JwtConfig.createRefreshToken(userId)
+            accessToken = accessToken,
+            refreshToken = refreshToken
         )
     }
 }

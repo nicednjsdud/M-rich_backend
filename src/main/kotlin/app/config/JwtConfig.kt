@@ -12,7 +12,6 @@ object JwtConfig {
     private lateinit var realm: String
     private const val accessTokenValidityInMs = 15 * 60 * 1000L
     private const val refreshTokenValidityInMs = 7 * 24 * 60 * 60 * 1000L
-
     private lateinit var algorithm: Algorithm
 
     fun init(config: ApplicationConfig) {
@@ -53,4 +52,7 @@ object JwtConfig {
         val decodedJWT = verifier.verify(refreshToken)
         return decodedJWT.getClaim("userId").asInt()
     }
+
+    fun getRefreshTokenExpiration() = refreshTokenValidityInMs.toLong()
+
 }
