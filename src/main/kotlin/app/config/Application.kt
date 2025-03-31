@@ -1,22 +1,27 @@
 package app.config
 
 import app.infrastructure.database.configureDatabases
+import app.infrastructure.redis.RedisConfig
 import app.infrastructure.serialzation.configureSerialization
-import com.wyc.app.config.configureHTTP
-import com.wyc.app.config.configureMonitoring
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
-import kotlinx.serialization.json.Json
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.*
+import kotlinx.serialization.json.Json
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
 }
 
 fun Application.module() {
+    // ✅ JWT 설정
+    val config = environment.config
+    JwtConfig.init(config)
+
+    // ✅ Redis 설정
+    RedisConfig.init(config)
+
     // ✅ 서버 ContentNegotiation 설정
     install(io.ktor.server.plugins.contentnegotiation.ContentNegotiation) {
         json(Json {
@@ -42,4 +47,5 @@ fun Application.module() {
     configureHTTP()
     configureMonitoring()
     configureRouting(client)
+    configureSecurity()
 }

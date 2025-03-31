@@ -1,9 +1,8 @@
 package app.config
 
-import app.api.mapleRoutes
-import app.api.ocrRoutes
-import app.api.tradeHistoryRoutes
-import app.api.userRoutes
+import app.api.*
+import app.domain.auth.repository.AuthRepository
+import app.domain.auth.service.AuthService
 import app.domain.maple.repository.MapleRepository
 import app.domain.maple.service.MapleService
 import app.domain.ocr.service.OcrService
@@ -25,6 +24,9 @@ fun Application.configureRouting(client: HttpClient) {
     val userRepository = UserRepository(database)
     val userService = UserService(userRepository)
 
+    val authRepository = AuthRepository()
+    val authService = AuthService(authRepository, userRepository)
+
     val mapleRepository = MapleRepository(database)
     val mapleService = MapleService(config, client, mapleRepository, userRepository)
 
@@ -42,6 +44,10 @@ fun Application.configureRouting(client: HttpClient) {
             userRoutes(userService)
         }
 
+        route("/api/v1/auth"){
+            authRoutes(authService)
+        }
+
         route("/api/v1/maple") {
             mapleRoutes(mapleService)
         }
@@ -53,5 +59,6 @@ fun Application.configureRouting(client: HttpClient) {
         route("/api/v1/tradeHistory") {
             tradeHistoryRoutes(tradeHistoryService)
         }
+
     }
 }

@@ -1,4 +1,4 @@
-package com.wyc.app.config
+package app.config
 
 import io.ktor.server.application.*
 import io.ktor.server.plugins.calllogging.*

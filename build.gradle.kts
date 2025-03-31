@@ -78,6 +78,14 @@ dependencies {
 
     // OCR
     implementation("com.google.cloud:google-cloud-vision:3.31.0")
+
+    // JWT
+    implementation("io.ktor:ktor-server-auth:1.6.0")
+    implementation("io.ktor:ktor-server-auth-jwt:1.6.0")
+
+    // Redis
+    implementation("io.lettuce:lettuce-core:6.2.5.RELEASE")
+
 }
 
 sourceSets {

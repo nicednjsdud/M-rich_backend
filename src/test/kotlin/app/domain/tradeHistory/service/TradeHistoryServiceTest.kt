@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TradeHistoryServiceTest{
-    private val config = HoconApplicationConfig(ConfigFactory.load("application.yaml"))
+    private val config = HoconApplicationConfig(ConfigFactory.load("application-test.conf"))
     private val database = DatabaseFactory.init(config)
 
     private lateinit var tradeHistoryService: TradeHistoryService

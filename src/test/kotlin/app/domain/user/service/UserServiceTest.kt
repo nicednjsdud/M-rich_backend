@@ -20,7 +20,7 @@ class UserServiceTest {
     private lateinit var userService: UserService
     private lateinit var userRepository: UserRepository
 
-    private val config = HoconApplicationConfig(ConfigFactory.load("application.yaml"))
+    private val config = HoconApplicationConfig(ConfigFactory.load("application-test.conf"))
     private val database = DatabaseFactory.init(config)
 
     @BeforeAll
@@ -66,37 +66,5 @@ class UserServiceTest {
         assert(result is APIResult.Error)
         assertEquals("이미 존재하는 사용자입니다.", (result as APIResult.Error).error)
 
-    }
-
-    @Test
-    fun `loginUser - 올바른 정보로 로그인하면 토큰을 반환해야 한다`() = runBlocking {
-        val request = UserCreateRequest("wycUser", "wycPassword123")
-        val register = userService.register(request)
-
-        val result = userService.login(request);
-
-        assertNotNull(result)
-        assertEquals("fake_token_${(register as APIResult.Success).data}", (result as APIResult.Success).data)
-    }
-
-    @Test
-    fun `loginUser - 잘못된 비밀번호로 로그인하면 실패해야 한다`() = runBlocking {
-        val request = UserCreateRequest("wycUser", "wycPassword123")
-        userService.register(request)
-
-        val result = userService.login(UserCreateRequest("wycUser", "wrongPassword"))
-
-        assert(result is APIResult.Error)
-        assertEquals("비밀번호가 일치하지 않습니다.", (result as APIResult.Error).error)
-    }
-
-    @Test
-    fun `loginUser - 존재하지 않는 유저로 로그인하면 실패해야 한다`() = runBlocking {
-        val request = UserCreateRequest("wycUser", "wycPassword123")
-
-        val result = userService.login(request)
-
-        assert(result is APIResult.Error)
-        assertEquals("사용자를 찾을 수 없습니다.", (result as APIResult.Error).error)
     }
 }
